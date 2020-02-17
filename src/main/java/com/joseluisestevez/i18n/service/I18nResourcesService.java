@@ -6,5 +6,4 @@ public interface I18nResourcesService {
 
     String getMessage(String value, String defaultValue, String language);
 
-    void clearCache();
 }

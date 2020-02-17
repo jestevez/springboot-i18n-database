@@ -14,4 +14,5 @@ public interface LanguageService {
 
     void deleteById(String id);
 
+    Language findByIsDefault(Boolean isDefault);
 }

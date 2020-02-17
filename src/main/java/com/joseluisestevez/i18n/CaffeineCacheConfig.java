@@ -12,7 +12,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 public class CaffeineCacheConfig {
 
     public CacheManager cacheManager() {
-	CaffeineCacheManager cacheManager = new CaffeineCacheManager("resources-cache");
+	CaffeineCacheManager cacheManager = new CaffeineCacheManager("resources-cache", "languages-cache");
 	cacheManager.setCaffeine(caffeineCacheBuilder());
 	return cacheManager;
     }

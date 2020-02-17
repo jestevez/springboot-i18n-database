@@ -1,6 +1,5 @@
 package com.joseluisestevez.i18n.service.impl;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -32,35 +31,28 @@ public class I18nResourcesServiceImpl implements I18nResourcesService {
 	return getMessage(value, defaultValue, currentLocale.getLanguage());
     }
 
-    @Override
-    public String getMessage(String value, String defaultValue, String language) {
-	// TODO This method
-	LOGGER.info("language [{}]", language);
-	Resource resource = resourceService.findByLanguageAndReference(language, value);
+    private String getMessageByLanguageAndReference(String language, String reference, String defaultValue) {
+	Language languageDB = languageService.findById(language);
+	if (languageDB == null || language == null) {
+	    Language languageDefault = languageService.findByIsDefault(true);
+	    language = languageDefault.getLanguage();
+	}
+	Resource resource = resourceService.findByLanguageAndReference(language, reference);
 	if (resource == null) {
-
 	    Language languageObj = languageService.findById(language);
-	    if (languageObj != null) {
-		resource = resourceService.findByLanguageAndReference(languageObj.getLanguage(), value);
-	    }
-
-	    if (resource == null) {
-		List<Resource> list = resourceService.findByReference(value);
-		for (Resource r : list) {
-		    return r.getValue();
-		}
-
+	    if (languageObj == null || languageObj.getParent() == null) {
 		return defaultValue;
 	    }
-
+	    return getMessageByLanguageAndReference(languageObj.getParent(), reference, defaultValue);
+	} else {
+	    return resource.getValue();
 	}
-	return resource.getValue();
     }
 
     @Override
-    public void clearCache() {
-	// TODO Auto-generated method stub
-
+    public String getMessage(String value, String defaultValue, String language) {
+	LOGGER.info("language [{}]", language);
+	return getMessageByLanguageAndReference(language, value, defaultValue);
     }
 
 }
